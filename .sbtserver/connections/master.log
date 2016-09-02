@@ -1,7 +1,7 @@
-New log file opened at Fri Sep 02 15:27:00 MSK 2016 by 30918@mac290rds.rambler.ramblermedia.com
-Taking next connection to: 65085
-New client attempting to connect on port: 65086-65085
-  Address = /10.60.24.124:65085
-This client on port 65086 has uuid 4880caa5-34fc-484c-bd8d-b834817de8b2 configName activator humanReadableName Activator protocolVersion 3 featureTags Vector()
-Connected Clients: activator-4880caa5-34fc-484c-bd8d-b834817de8b2
-Taking next connection to: 65085
+New log file opened at Fri Sep 02 15:51:06 MSK 2016 by 32701@mac290rds.rambler.ramblermedia.com
+Taking next connection to: 49405
+New client attempting to connect on port: 49406-49405
+  Address = /172.16.1.243:49405
+This client on port 49406 has uuid 78f8b8a8-d5c8-4632-b253-7fabe5229de5 configName activator humanReadableName Activator protocolVersion 3 featureTags Vector()
+Connected Clients: activator-78f8b8a8-d5c8-4632-b253-7fabe5229de5
+Taking next connection to: 49405
