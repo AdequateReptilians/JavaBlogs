@@ -16,6 +16,9 @@ public class Person {
     @Column(name = "id")
     private int id;
 
+    @Column
+    private int age;
+
     public Person(final String name, final int id) {
         this.name = name;
         this.id = id;
@@ -34,5 +37,13 @@ public class Person {
 
     public int getId() {
         return id;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 }

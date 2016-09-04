@@ -3,8 +3,6 @@ package controllers;
 import play.mvc.*;
 
 import views.html.*;
-import play.db.DB;
-import java.sql.Connection;
 import play.db.jpa.Transactional;
 import play.db.jpa.JPAApi;
 import play.data.FormFactory;
@@ -43,6 +41,6 @@ public class HomeController extends Controller {
 
         List<Person> persons = jpaApi.em().createQuery("select p from Person p", Person.class).getResultList();
         System.out.println(persons);
-        return ok(index.render("xuz."));
+        return ok(index.render(persons.toString()));
     }
 }
