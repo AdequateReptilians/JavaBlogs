@@ -34,6 +34,10 @@ public class HomeController extends Controller {
 
     @Transactional
     public Result index() {
+        /**
+         * Короче эта херня создает пустую запись в базе на основе переданных данных.
+         * В данном случае - нихуя, поскольку все делается в методе index, на главной странице
+         */
         Person person = formFactory.form(Person.class).bindFromRequest().get();
         jpaApi.em().persist(person);
 
