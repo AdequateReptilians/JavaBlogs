@@ -1,17 +1,14 @@
 package models.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 
 @Entity
 public class Person {
 
     @Id
-    @GeneratedValue
-    private Long personId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column private String name;
 
@@ -26,7 +23,7 @@ public class Person {
     }
 
     public Long getPersonId() {
-        return personId;
+        return id;
     }
 
     public String getName() {
