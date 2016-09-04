@@ -3,37 +3,40 @@ package models.entities;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Table;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 
 @Entity
+@Table(name="persons")
 public class Person {
 
+    @Column(name = "name")
+    private String name;
+
     @Id
-    @GeneratedValue
-    private Long personId;
+    @Column(name = "id")
+    private int id;
 
-    @Column private String name;
-
-    @Column private int age;
-
-    public Person(final String name, final int age) {
+    public Person(final String name, final int id) {
         this.name = name;
-        this.age = age;
+        this.id = id;
     }
 
     public Person() {
     }
 
-    public Long getPersonId() {
-        return personId;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getName() {
         return name;
     }
 
-    public int getAge() {
-        return age;
+    public int getId() {
+        return id;
     }
 }
