@@ -7,3 +7,9 @@ target
 /.settings
 /.sbtserver
 /RUNNING_PID
+/.sbtserver/
+/project/.sbtserver
+/project/.sbtserver.lock
+/project/
+project/.sbtserver
+project/project/
