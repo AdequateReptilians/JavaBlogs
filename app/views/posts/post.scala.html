@@ -1,6 +1,6 @@
 @(post: models.entities.Post)
 
 <li>
-    Title: @post.getTitle()
+    Title: <a href='@(routes.PostController.show(post.getId()))'> @post.getTitle()</a>
     Content: @post.getContent()
 </li>
