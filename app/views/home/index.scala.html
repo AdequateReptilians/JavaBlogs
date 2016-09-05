@@ -17,13 +17,9 @@
 
         <ul>
             @for(post <- posts) {
-                <li style="border-bottom: 1px solid #111;">title: @post.getTitle() <br>
-                    content: @post.getContent()
-                </li>
+                @(views.html.posts.post(post))
             }
         </ul>
-
-
     </div>
 
 }

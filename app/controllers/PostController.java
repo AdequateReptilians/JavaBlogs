@@ -7,6 +7,7 @@ import play.db.jpa.JPAApi;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import views.html.posts.*;
 
 import javax.inject.Inject;
 
@@ -19,6 +20,12 @@ public class PostController extends Controller {
     public PostController(FormFactory formFactory, JPAApi jpaApi) {
         this.jpaApi = jpaApi;
         this.formFactory = formFactory;
+    }
+
+    @Transactional
+    public Result show(long id) {
+        Post post = jpaApi.em().find(Post.class, id);
+        return ok(views.html.posts.show.render(post));
     }
 
     @Transactional
