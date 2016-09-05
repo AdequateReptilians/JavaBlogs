@@ -1,0 +1,25 @@
+@(posts: List[models.entities.Post])
+
+@main("Welcome to Play") {
+
+    @*
+     * Get an `Html` object by calling the built-in Play welcome
+     * template and passing a `String` message.
+     *@
+    <div class="well" style="display: block;
+                font-family: Verdana">
+
+        <form action="@routes.PostController.create()" method="post">
+            <input type="text" name="title" placeholder="title"><br><br>
+            <textarea name="content" placeholder="content"></textarea>
+            <input type="submit" value="Ok">
+        </form>
+
+        <ul>
+            @for(post <- posts) {
+                @(views.html.posts.post(post))
+            }
+        </ul>
+    </div>
+
+}

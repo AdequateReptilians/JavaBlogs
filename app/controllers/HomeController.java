@@ -2,7 +2,7 @@ package controllers;
 
 import play.mvc.*;
 
-import views.html.*;
+import views.html.home.*; // Idea тупая, эта строчка нужна
 import play.db.jpa.Transactional;
 import play.db.jpa.JPAApi;
 import play.data.FormFactory;
@@ -32,16 +32,9 @@ public class HomeController extends Controller {
 
     @Transactional
     public Result index() {
-        /**
-         * Короче эта херня создает пустую запись в базе на основе переданных данных.
-         * В данном случае - нихуя, поскольку все делается в методе index, на главной странице
-         */
-//        Person person = formFactory.form(Person.class).bindFromRequest().get();
-//        jpaApi.em().persist(person);
-
-
-//        List<Person> persons = jpaApi.em().createQuery("select p from Person p", Person.class).getResultList();
-//        System.out.println(persons);
-        return ok(index.render("ок"));
+        List<Post> posts = jpaApi.em()
+                .createQuery("select p from Post p", Post.class)
+                .getResultList();
+        return ok(index.render(posts));
     }
 }

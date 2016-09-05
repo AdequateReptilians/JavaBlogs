@@ -3,8 +3,10 @@ package models.entities;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.List;
 
-@Entity(name = "posts")
+@Entity
+@Table(name = "posts")
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,6 +19,9 @@ public class Post {
     @Column
     @Type(type = "text")
     private String content;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Comment> comments;
 
     public Long getId() {
         return id;
@@ -40,5 +45,13 @@ public class Post {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }
