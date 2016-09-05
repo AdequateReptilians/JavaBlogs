@@ -1,31 +1,29 @@
-@*
- * This template takes a single argument, a String containing a
- * message to display.
- *@
-@(message: String)
+@(posts: List[models.entities.Post])
 
-@*
- * Call the `main` template with two arguments. The first
- * argument is a `String` with the title of the page, the second
- * argument is an `Html` object containing the body of the page.
- *@
 @main("Welcome to Play") {
 
     @*
      * Get an `Html` object by calling the built-in Play welcome
      * template and passing a `String` message.
      *@
-    <!--@play20.welcome(message, style = "Java")-->
-    <div style="display: block;
-                width: 200px;
-                height: 100px;
-                background: #eee;
-                padding: 20px;
-                margin-left: auto;
-                margin-right: auto;
-                font-size: 20px;
+    <div class="well" style="display: block;
                 font-family: Verdana">
-     @message
+
+        <form action="@routes.PostController.create()" method="post">
+            <input type="text" name="title" placeholder="title"><br><br>
+            <textarea name="content" placeholder="content"></textarea>
+            <input type="submit" value="Ok">
+        </form>
+
+        <ul>
+            @for(post <- posts) {
+                <li style="border-bottom: 1px solid #111;">title: @post.getTitle() <br>
+                    content: @post.getContent()
+                </li>
+            }
+        </ul>
+
+
     </div>
 
 }

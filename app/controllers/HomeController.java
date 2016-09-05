@@ -38,10 +38,11 @@ public class HomeController extends Controller {
          */
 //        Person person = formFactory.form(Person.class).bindFromRequest().get();
 //        jpaApi.em().persist(person);
-
+          List<Post> posts = jpaApi.em().createQuery("select p from Post p", Post.class).getResultList();
 
 //        List<Person> persons = jpaApi.em().createQuery("select p from Person p", Person.class).getResultList();
 //        System.out.println(persons);
-        return ok(index.render("ок"));
+//        return ok(index.render());
+        return ok(index.render(posts));
     }
 }

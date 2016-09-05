@@ -10,7 +10,8 @@ public class Comment {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "STOCK_ID", nullable = false)
     private Post post;
 
     @Column
