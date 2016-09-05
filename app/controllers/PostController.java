@@ -3,7 +3,6 @@ package controllers;
 import play.data.FormFactory;
 import play.db.jpa.JPAApi;
 import play.mvc.Controller;
-
 import javax.inject.Inject;
 
 public class PostController extends Controller {
