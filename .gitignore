@@ -7,3 +7,9 @@ target
 /.settings
 /.sbtserver
 /RUNNING_PID
+
+.sbtserver/connections/master.log
+
+.sbtserver/connections/master.log
+
+*.log
