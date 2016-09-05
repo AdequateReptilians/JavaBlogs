@@ -6,7 +6,6 @@ target
 /.project
 /.settings
 /.sbtserver
-/project
 /RUNNING_PID
 
 .sbtserver/connections/master.log
