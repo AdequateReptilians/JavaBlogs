@@ -13,3 +13,5 @@ target
 .sbtserver/connections/master.log
 
 *.log
+
+project/.sbtserver
