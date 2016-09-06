@@ -36,11 +36,12 @@ public class HomeController extends Controller {
          * Короче эта херня создает пустую запись в базе на основе переданных данных.
          * В данном случае - нихуя, поскольку все делается в методе index, на главной странице
          */
-        Person person = formFactory.form(Person.class).bindFromRequest().get();
-        jpaApi.em().persist(person);
+//        Person person = formFactory.form(Person.class).bindFromRequest().get();
+//        jpaApi.em().persist(person);
+//
+//        List<Person> persons = jpaApi.em().createQuery("select p from Person p", Person.class).getResultList();
+//        System.out.println(persons);
 
-        List<Person> persons = jpaApi.em().createQuery("select p from Person p", Person.class).getResultList();
-        System.out.println(persons);
-        return ok(index.render(persons.toString()));
+        return ok();
     }
 }

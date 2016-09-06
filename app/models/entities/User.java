@@ -5,17 +5,14 @@ import be.objectify.deadbolt.java.models.Role;
 import be.objectify.deadbolt.java.models.Subject;
 import com.feth.play.module.pa.providers.password.UsernamePasswordAuthUser;
 import com.feth.play.module.pa.user.*;
-import models.*;
-import models.LinkedAccount;
-import models.TokenAction.Type;
+import models.entities.LinkedAccount;
+import models.entities.TokenAction.Type;
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import play.db.jpa.JPA;
 
 import javax.persistence.*;
-import javax.persistence.criteria.*;
 import java.util.*;
 
 /**
@@ -133,13 +130,14 @@ public class User implements Subject {
 
 	public void merge(final User otherUser) {
 		for (final models.entities.LinkedAccount acc : otherUser.linkedAccounts) {
-			this.linkedAccounts.add(models.LinkedAccount.create(acc));
+			this.linkedAccounts.add(models.entities.LinkedAccount.create(acc));
 		}
 		// do all other merging stuff here - like resources, etc.
 
 		// deactivate the merged user that got added to this one
 		otherUser.active = false;
-		Arrays.asList(new User[] { otherUser, this }).forEach(u -> u.save());
+        Session session = (Session)JPA.em().getCriteriaBuilder();
+		Arrays.asList(new User[] { otherUser, this }).forEach(u -> session.save(u));
 	}
 
 	public static User create(final AuthUser authUser) {
@@ -180,8 +178,8 @@ public class User implements Subject {
 		    user.lastName = lastName;
 		  }
 		}
-
-		user.save();
+        Session session = (Session)JPA.em().getCriteriaBuilder();
+        session.save(user);
 		// Ebean.saveManyToManyAssociations(user, "roles");
 		// Ebean.saveManyToManyAssociations(user, "permissions");
 		return user;
@@ -195,7 +193,7 @@ public class User implements Subject {
 	public Set<String> getProviders() {
 		final Set<String> providerKeys = new HashSet<String>(
 				this.linkedAccounts.size());
-		for (final models.LinkedAccount acc : this.linkedAccounts) {
+		for (final models.entities.LinkedAccount acc : this.linkedAccounts) {
 			providerKeys.add(acc.providerKey);
 		}
 		return providerKeys;
@@ -204,14 +202,16 @@ public class User implements Subject {
 	public static void addLinkedAccount(final AuthUser oldUser,
 			final AuthUser newUser) {
 		final User u = User.findByAuthUserIdentity(oldUser);
-		u.linkedAccounts.add(models.LinkedAccount.create(newUser));
-		u.save();
+		u.linkedAccounts.add(models.entities.LinkedAccount.create(newUser));
+        Session session = (Session)JPA.em().getCriteriaBuilder();
+        session.save(u);
 	}
 
 	public static void setLastLoginDate(final AuthUser knownUser) {
 		final User u = User.findByAuthUserIdentity(knownUser);
 		u.lastLogin = new Date();
-		u.save();
+        Session session = (Session)JPA.em().getCriteriaBuilder();
+        session.save(u);
 	}
 
 	public static User findByEmail(final String email) {
@@ -225,20 +225,21 @@ public class User implements Subject {
                 .add(Restrictions.eq("email", email));
 	}
 
-	public models.LinkedAccount getAccountByProvider(final String providerKey) {
-		return models.LinkedAccount.findByProviderKey(this, providerKey);
+	public models.entities.LinkedAccount getAccountByProvider(final String providerKey) {
+		return models.entities.LinkedAccount.findByProviderKey(this, providerKey);
 	}
 
 	public static void verify(final User unverified) {
 		// You might want to wrap this into a transaction
 		unverified.emailValidated = true;
-		unverified.save();
+        Session session = (Session)JPA.em().getCriteriaBuilder();
+        session.save(unverified);
 		TokenAction.deleteByUser(unverified, Type.EMAIL_VERIFICATION);
 	}
 
 	public void changePassword(final UsernamePasswordAuthUser authUser,
 			final boolean create) {
-		models.LinkedAccount a = this.getAccountByProvider(authUser.getProvider());
+		models.entities.LinkedAccount a = this.getAccountByProvider(authUser.getProvider());
 		if (a == null) {
 			if (create) {
 				a = LinkedAccount.create(authUser);
@@ -249,7 +250,8 @@ public class User implements Subject {
 			}
 		}
 		a.providerUserId = authUser.getHashedPassword();
-		a.save();
+        Session session = (Session)JPA.em().getCriteriaBuilder();
+        session.save(a);
 	}
 
 	public void resetPassword(final UsernamePasswordAuthUser authUser,
