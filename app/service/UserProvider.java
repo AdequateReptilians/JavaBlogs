@@ -2,8 +2,8 @@ package service;
 
 import com.feth.play.module.pa.PlayAuthenticate;
 import com.feth.play.module.pa.user.AuthUser;
-import models.User;
-import org.jetbrains.annotations.Nullable;
+import models.entities.User;
+//import org.jetbrains.annotations.Nullable;
 import play.mvc.Http.Session;
 
 import javax.inject.Inject;
@@ -20,7 +20,7 @@ public class UserProvider {
         this.auth = auth;
     }
 
-    @Nullable
+//    @Nullable
     public User getUser(Session session) {
         final AuthUser currentAuthUser = this.auth.getUser(session);
         final User localUser = User.findByAuthUserIdentity(currentAuthUser);

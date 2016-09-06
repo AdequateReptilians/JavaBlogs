@@ -6,7 +6,7 @@ import be.objectify.deadbolt.java.ExecutionContextProvider;
 import be.objectify.deadbolt.java.models.Subject;
 import com.feth.play.module.pa.PlayAuthenticate;
 import com.feth.play.module.pa.user.AuthUserIdentity;
-import models.User;
+import models.entities.User;
 import play.mvc.Http;
 import play.mvc.Result;
 

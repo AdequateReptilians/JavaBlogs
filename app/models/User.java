@@ -11,7 +11,7 @@
 //import com.feth.play.module.pa.user.EmailIdentity;
 //import com.feth.play.module.pa.user.NameIdentity;
 //import com.feth.play.module.pa.user.FirstLastNameIdentity;
-//import models.TokenAction.Type;
+//import models.entitiesTokenAction.Type;
 //import play.data.format.Formats;
 //import play.data.validation.Constraints;
 //

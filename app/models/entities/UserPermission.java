@@ -1,7 +1,6 @@
 package models.entities;
 
 import be.objectify.deadbolt.java.models.Permission;
-import models.AppModel;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import play.db.jpa.JPA;
@@ -13,7 +12,7 @@ import javax.persistence.*;
  * Deadbolt2
  */
 @Entity
-public class UserPermission extends AppModel implements Permission {
+public class UserPermission implements Permission {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")

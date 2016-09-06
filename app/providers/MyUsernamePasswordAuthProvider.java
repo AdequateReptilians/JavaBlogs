@@ -7,10 +7,10 @@ import com.feth.play.module.pa.providers.password.UsernamePasswordAuthProvider;
 import com.feth.play.module.pa.providers.password.UsernamePasswordAuthUser;
 
 import controllers.routes;
-import models.LinkedAccount;
-import models.TokenAction;
-import models.TokenAction.Type;
-import models.User;
+import models.entities.LinkedAccount;
+import models.entities.TokenAction;
+import models.entities.TokenAction.Type;
+import models.entities.User;
 import play.Logger;
 import play.data.Form;
 import play.data.FormFactory;
