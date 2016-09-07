@@ -9,7 +9,6 @@ import com.feth.play.module.pa.providers.password.UsernamePasswordAuthUser;
 import controllers.routes;
 import models.entities.LinkedAccount;
 import models.entities.TokenAction;
-import models.entities.TokenAction.Type;
 import models.entities.User;
 import play.Logger;
 import play.data.Form;
@@ -281,13 +280,13 @@ public class MyUsernamePasswordAuthProvider
 	protected String generateVerificationRecord(final User user) {
 		final String token = generateToken();
 		// Do database actions, etc.
-		TokenAction.create(Type.EMAIL_VERIFICATION, token, user);
+		TokenAction.create("EMAIL_VERIFICATION", token, user);
 		return token;
 	}
 
 	protected String generatePasswordResetRecord(final User u) {
 		final String token = generateToken();
-		TokenAction.create(Type.PASSWORD_RESET, token, u);
+		TokenAction.create("PASSWORD_RESET", token, u);
 		return token;
 	}
 

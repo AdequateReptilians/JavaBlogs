@@ -22,14 +22,12 @@ public class UserPermission implements Permission {
 	@org.hibernate.annotations.Type(type = "text")
 	public String value;
 
-    public static final Session session = (Session) JPA.em().getCriteriaBuilder();
-
 	public String getValue() {
 		return value;
 	}
 
 	public static UserPermission findByValue(String value) {
-
+		Session session = (Session) JPA.em().getCriteriaBuilder();
 	    return (UserPermission)session.createCriteria(UserPermission.class)
                 .add(Restrictions.eq("value", value))
                 .list().get(0);

@@ -5,6 +5,8 @@ import be.objectify.deadbolt.java.actions.Restrict;
 import com.feth.play.module.pa.PlayAuthenticate;
 import models.entities.User;
 import play.data.Form;
+import play.db.Database;
+import play.db.jpa.JPAApi;
 import play.mvc.Controller;
 import play.mvc.Result;
 import providers.MyUsernamePasswordAuthProvider;
@@ -28,20 +30,32 @@ public class Application extends Controller {
 	private final MyUsernamePasswordAuthProvider provider;
 
 	private final UserProvider userProvider;
+    private final Database db;
 
-	public static String formatTimestamp(final long t) {
+
+    public static String formatTimestamp(final long t) {
 		return new SimpleDateFormat("yyyy-dd-MM HH:mm:ss").format(new Date(t));
 	}
 
 	@Inject
 	public Application(final PlayAuthenticate auth, final MyUsernamePasswordAuthProvider provider,
-					   final UserProvider userProvider) {
+					   final UserProvider userProvider, final Database db) {
 		this.auth = auth;
 		this.provider = provider;
 		this.userProvider = userProvider;
+		this.db = db;
 	}
 
 	public Result index() {
+	    // TOOD: finish hook
+//        Session session = (Session) JPAApi.api.em().getCriteriaBuilder();
+//        if ((Integer)session.createCriteria(SecurityRole.class).setProjection(Projections.rowCount()).uniqueResult() == 0) {
+//            for (final String roleName : Arrays.asList(controllers.Application.USER_ROLE)) {
+//                final SecurityRole role = new SecurityRole();
+//                role.roleName = roleName;
+//                session.save(role);
+//            }
+//        }
 		return ok(index.render(this.userProvider));
 	}
 

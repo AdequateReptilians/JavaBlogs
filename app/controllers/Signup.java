@@ -1,7 +1,6 @@
 package controllers;
 
 import models.entities.TokenAction;
-import models.entities.TokenAction.Type;
 import models.entities.User;
 import play.data.Form;
 import play.data.FormFactory;
@@ -139,7 +138,7 @@ public class Signup extends Controller {
 	 * @param type
 	 * @return
 	 */
-	private TokenAction tokenIsValid(final String token, final Type type) {
+	private TokenAction tokenIsValid(final String token, final String type) {
 		TokenAction ret = null;
 		if (token != null && !token.trim().isEmpty()) {
 			final TokenAction ta = TokenAction.findByToken(token, type);
@@ -153,7 +152,7 @@ public class Signup extends Controller {
 
 	public Result resetPassword(final String token) {
 		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
-		final TokenAction ta = tokenIsValid(token, Type.PASSWORD_RESET);
+		final TokenAction ta = tokenIsValid(token, "PASSWORD_RESET");
 		if (ta == null) {
 			return badRequest(no_token_or_invalid.render(this.userProvider));
 		}
@@ -173,7 +172,7 @@ public class Signup extends Controller {
 			final String token = filledForm.get().token;
 			final String newPassword = filledForm.get().password;
 
-			final TokenAction ta = tokenIsValid(token, Type.PASSWORD_RESET);
+			final TokenAction ta = tokenIsValid(token, "PASSWORD_RESET");
 			if (ta == null) {
 				return badRequest(no_token_or_invalid.render(this.userProvider));
 			}
@@ -217,7 +216,7 @@ public class Signup extends Controller {
 
 	public Result verify(final String token) {
 		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
-		final TokenAction ta = tokenIsValid(token, Type.EMAIL_VERIFICATION);
+		final TokenAction ta = tokenIsValid(token, "EMAIL_VERIFICATION");
 		if (ta == null) {
 			return badRequest(no_token_or_invalid.render(this.userProvider));
 		}

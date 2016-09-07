@@ -19,7 +19,9 @@ import be.objectify.deadbolt.java.models.Role;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import play.db.jpa.JPA;
+import play.db.jpa.JPAApi;
 
+import javax.inject.Inject;
 import javax.persistence.*;
 
 /**
@@ -28,8 +30,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "security_roles")
 public class SecurityRole implements Role {
-
-	@Id
+    @Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	public Long id;
@@ -38,7 +39,6 @@ public class SecurityRole implements Role {
 	@org.hibernate.annotations.Type(type = "text")
 	public String roleName;
 
-	public static final Session session = (Session)JPA.em().getCriteriaBuilder();
 
 	@Override
 	public String getName() {
@@ -46,6 +46,7 @@ public class SecurityRole implements Role {
 	}
 
 	public static SecurityRole findByRoleName(String roleName) {
+        Session session = (Session)JPA.em().getCriteriaBuilder();
 		return (SecurityRole)session.createCriteria(SecurityRole.class).add(Restrictions.eq("role_name", roleName)).list().get(0);
 	}
 }

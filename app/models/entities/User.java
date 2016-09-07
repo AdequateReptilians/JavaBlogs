@@ -6,7 +6,6 @@ import be.objectify.deadbolt.java.models.Subject;
 import com.feth.play.module.pa.providers.password.UsernamePasswordAuthUser;
 import com.feth.play.module.pa.user.*;
 import models.entities.LinkedAccount;
-import models.entities.TokenAction.Type;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -234,7 +233,7 @@ public class User implements Subject {
 		unverified.emailValidated = true;
         Session session = (Session)JPA.em().getCriteriaBuilder();
         session.save(unverified);
-		TokenAction.deleteByUser(unverified, Type.EMAIL_VERIFICATION);
+		TokenAction.deleteByUser(unverified, "EMAIL_VERIFICATION");
 	}
 
 	public void changePassword(final UsernamePasswordAuthUser authUser,
@@ -258,6 +257,6 @@ public class User implements Subject {
 			final boolean create) {
 		// You might want to wrap this into a transaction
 		this.changePassword(authUser, create);
-		TokenAction.deleteByUser(this, Type.PASSWORD_RESET);
+		TokenAction.deleteByUser(this, "PASSWORD_RESET");
 	}
 }
