@@ -20,6 +20,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import play.db.jpa.JPA;
 import play.db.jpa.JPAApi;
+import play.libs.F;
 
 import javax.inject.Inject;
 import javax.persistence.*;
@@ -35,10 +36,7 @@ public class SecurityRole implements Role {
 	@Column(name = "id")
 	public Long id;
 
-	@Column
-	@org.hibernate.annotations.Type(type = "text")
 	public String roleName;
-
 
 	@Override
 	public String getName() {
@@ -46,7 +44,7 @@ public class SecurityRole implements Role {
 	}
 
 	public static SecurityRole findByRoleName(String roleName) {
-        Session session = (Session)JPA.em().getCriteriaBuilder();
+		Session session = (Session)JPA.em().getCriteriaBuilder();
 		return (SecurityRole)session.createCriteria(SecurityRole.class).add(Restrictions.eq("role_name", roleName)).list().get(0);
 	}
 }

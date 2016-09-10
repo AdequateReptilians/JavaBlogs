@@ -18,8 +18,6 @@ public class UserPermission implements Permission {
 	@Column(name = "id")
 	public Long id;
 
-	@Column
-	@org.hibernate.annotations.Type(type = "text")
 	public String value;
 
 	public String getValue() {

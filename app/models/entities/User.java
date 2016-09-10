@@ -18,44 +18,28 @@ import java.util.*;
  * Initial version based on work by Steve Chaloner (steve@objectify.be) for
  * Deadbolt2
  */
+// TODO: Add beans setters and getters
 @Entity
 @Table(name = "users")
 public class User implements Subject {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	public Long id;
 
-	@Column
-	@org.hibernate.annotations.Type(type = "text")
 	public String email;
 
-	@Column
-	@org.hibernate.annotations.Type(type = "text")
 	public String name;
 
-	@Column
-	@org.hibernate.annotations.Type(type = "text")
 	public String firstName;
 
-    @Column
-    @org.hibernate.annotations.Type(type = "text")
 	public String lastName;
 
-	//@Formats.DateTime(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column
-    @org.hibernate.annotations.Type(type="timestamp")
     public Date lastLogin;
 
-    @Column
-    @org.hibernate.annotations.Type(type = "boolean")
 	public boolean active;
 
-    @Column
-    @org.hibernate.annotations.Type(type = "boolean")
 	public boolean emailValidated;
-
 
 	@ManyToMany
 	public List<SecurityRole> roles;

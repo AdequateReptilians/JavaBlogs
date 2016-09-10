@@ -19,12 +19,8 @@ public class LinkedAccount {
     @JoinColumn(name = "user_id", nullable = false)
 	public User user;
 
-    @Column
-    @Type(type = "text")
 	public String providerUserId;
 
-    @Column
-    @Type(type = "text")
 	public String providerKey;
 
 	public static LinkedAccount findByProviderKey(final User user, String key) {

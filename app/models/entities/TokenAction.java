@@ -11,9 +11,6 @@ import java.util.List;
 
 @Entity(name = "token_actions")
 public class TokenAction {
-
-    @Column(name = "type")
-    @org.hibernate.annotations.Type(type = "text")
     public String type;
 
 
@@ -26,23 +23,17 @@ public class TokenAction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     public Long id;
 
     @Column(unique = true)
-    @org.hibernate.annotations.Type(type = "text")
 	public String token;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "target_user_id")
 	public models.entities.User targetUser;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created", nullable = false, length = 19)
 	public Date created;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "expires", nullable = false, length = 19)
 	public Date expires;
 
 	public static TokenAction findByToken(final String token, final String type) {

@@ -30,7 +30,7 @@ public class Application extends Controller {
 	private final MyUsernamePasswordAuthProvider provider;
 
 	private final UserProvider userProvider;
-    private final Database db;
+    private final JPAApi jpaApi;
 
 
     public static String formatTimestamp(final long t) {
@@ -39,24 +39,29 @@ public class Application extends Controller {
 
 	@Inject
 	public Application(final PlayAuthenticate auth, final MyUsernamePasswordAuthProvider provider,
-					   final UserProvider userProvider, final Database db) {
+					   final UserProvider userProvider, final JPAApi jpaApi) {
 		this.auth = auth;
 		this.provider = provider;
 		this.userProvider = userProvider;
-		this.db = db;
+		this.jpaApi = jpaApi;
 	}
 
 	public Result index() {
+		String foo = "dsdsada";
+		System.out.print(foo);
 	    // TOOD: finish hook
-//        Session session = (Session) JPAApi.api.em().getCriteriaBuilder();
-//        if ((Integer)session.createCriteria(SecurityRole.class).setProjection(Projections.rowCount()).uniqueResult() == 0) {
-//            for (final String roleName : Arrays.asList(controllers.Application.USER_ROLE)) {
-//                final SecurityRole role = new SecurityRole();
-//                role.roleName = roleName;
-//                session.save(role);
-//            }
-//        }
-		return ok(index.render(this.userProvider));
+//        jpaApi.withTransaction(em -> {
+//            HibernateEntityManager hem = em.unwrap(HibernateEntityManager.class);
+//            Session ses = hem.getSession();
+//            Criteria cr = ses.createCriteria(User.class)
+//                    .add(Restrictions.eq("active", true));
+//            User user = new User();
+//            user.active = true;
+//            user.email = "foo@bk.local";
+//            ses.save(user);
+//            return cr.list();
+//        });
+        return ok(index.render(this.userProvider));
 	}
 
 	@Restrict(@Group(Application.USER_ROLE))
