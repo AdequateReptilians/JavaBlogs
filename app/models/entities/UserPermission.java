@@ -23,11 +23,4 @@ public class UserPermission implements Permission {
 	public String getValue() {
 		return value;
 	}
-
-	public static UserPermission findByValue(String value) {
-		Session session = (Session) JPA.em().getCriteriaBuilder();
-	    return (UserPermission)session.createCriteria(UserPermission.class)
-                .add(Restrictions.eq("value", value))
-                .list().get(0);
-	}
 }

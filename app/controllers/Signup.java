@@ -183,6 +183,7 @@ public class Signup extends Controller {
 				// happen
 				u.resetPassword(new MyUsernamePasswordAuthUser(newPassword),
 						false);
+                TokenAction.deleteByUser(u, "PASSWORD_RESET");
 			} catch (final RuntimeException re) {
 				flash(Application.FLASH_MESSAGE_KEY,
 						this.msg.preferred(request()).at("playauthenticate.reset_password.message.no_password_account"));
@@ -222,6 +223,7 @@ public class Signup extends Controller {
 		}
 		final String email = ta.targetUser.email;
 		User.verify(ta.targetUser);
+		TokenAction.deleteByUser(unverified, "EMAIL_VERIFICATION");
 		flash(Application.FLASH_MESSAGE_KEY,
 				this.msg.preferred(request()).at("playauthenticate.verify_email.success", email));
 		if (this.userProvider.getUser(session()) != null) {

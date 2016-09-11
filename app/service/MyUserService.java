@@ -4,7 +4,10 @@ import com.feth.play.module.pa.PlayAuthenticate;
 import com.feth.play.module.pa.service.AbstractUserService;
 import com.feth.play.module.pa.user.AuthUser;
 import com.feth.play.module.pa.user.AuthUserIdentity;
+import dao.GenericDao;
+import dao.UserDao;
 import models.entities.User;
+import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -12,15 +15,16 @@ import javax.inject.Singleton;
 
 @Singleton
 public class MyUserService extends AbstractUserService {
+    @Inject
+    public JPAApi jpaApi;
 
 	@Inject
-	public MyUserService(final PlayAuthenticate auth) {
-		super(auth);
-	}
+	public MyUserService(final PlayAuthenticate auth) { super(auth); }
 
 	@Override
 	public Object save(final AuthUser authUser) {
-		final boolean isLinked = User.existsByAuthUserIdentity(authUser);
+        UserDao userDao = new UserDao(jpaApi.em());
+		final boolean isLinked = userDao.existsByAuthUserIdentity(authUser);
 		if (!isLinked) {
 			return User.create(authUser).id;
 		} else {
@@ -43,8 +47,9 @@ public class MyUserService extends AbstractUserService {
 
 	@Override
 	public AuthUser merge(final AuthUser newUser, final AuthUser oldUser) {
+	    UserDao userDao = new UserDao(jpaApi.em());
 		if (!oldUser.equals(newUser)) {
-			User.merge(oldUser, newUser);
+            userDao.merge(oldUser, newUser);
 		}
 		return oldUser;
 	}

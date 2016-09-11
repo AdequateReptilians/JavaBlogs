@@ -19,24 +19,28 @@ public class GenericDaoImpl<T, PK extends Serializable> implements GenericDao<T,
         this.type = type;
     }
 
-    public PK create(T newInstance){
-        return (PK)session.save(newInstance);
+    protected Session getSession() {
+        return this.session;
+    }
+
+    public T create(T newInstance){
+        return (T)getSession().save(newInstance);
     }
 
     /** Извлечь объект, предварительно сохраненный в базе данных, используя
      *   указанный id в качестве первичного ключа
      */
     public T findById(int id) {
-        return session.get(type, id);
+        return getSession().get(type, id);
     }
 
     /** Сохранить изменения, сделанные в объекте.  */
     public void update(T transientObject){
-        session.update(transientObject);
+        getSession().update(transientObject);
     }
 
     /** Удалить объект из базы данных */
     public void delete(T persistentObject){
-        session.delete(persistentObject);
+        getSession().delete(persistentObject);
     }
 }

@@ -42,9 +42,4 @@ public class SecurityRole implements Role {
 	public String getName() {
 		return roleName;
 	}
-
-	public static SecurityRole findByRoleName(String roleName) {
-		Session session = (Session)JPA.em().getCriteriaBuilder();
-		return (SecurityRole)session.createCriteria(SecurityRole.class).add(Restrictions.eq("role_name", roleName)).list().get(0);
-	}
 }

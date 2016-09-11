@@ -7,7 +7,10 @@ import com.feth.play.module.pa.providers.password.UsernamePasswordAuthProvider;
 import com.feth.play.module.pa.providers.password.UsernamePasswordAuthUser;
 
 import controllers.routes;
+import dao.SecurityRoleDao;
+import dao.UserDao;
 import models.entities.LinkedAccount;
+import models.entities.SecurityRole;
 import models.entities.TokenAction;
 import models.entities.User;
 import play.Logger;
@@ -164,11 +167,11 @@ public class MyUsernamePasswordAuthProvider
 		}
 		// The user either does not exist or is inactive - create a new one
 		@SuppressWarnings("unused")
-		final User newUser = User.create(user);
-		// Usually the email should be verified before allowing login, however
-		// if you return
-		// return SignupResult.USER_CREATED;
-		// then the user gets logged in directly
+		final UserDao userDao = new UserDao(jpa);
+		final SecurityRoleDao securityRoleDao = new SecurityRoleDao(jpa);
+        // Collections.singletonList(SecurityRole.findByRoleName(controllers.Application.USER_ROLE));
+        List<SecurityRole> roles = SecurityRoleDao.findByRoleName();
+		final User newUser = userDao.create(user, roles);
 		return SignupResult.USER_CREATED_UNVERIFIED;
 	}
 
