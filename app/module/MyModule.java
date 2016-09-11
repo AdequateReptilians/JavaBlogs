@@ -30,7 +30,7 @@ public class MyModule extends AbstractModule {
 
 		bind(Resolver.class).to(MyResolver.class);
 
-		// bind(DataInitializer.class).asEagerSingleton();
+		bind(DataInitializer.class).asEagerSingleton();
 
 		bind(MyUserService.class).asEagerSingleton();
 		//bind(GoogleAuthProvider.class).asEagerSingleton();

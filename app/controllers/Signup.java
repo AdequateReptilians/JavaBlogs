@@ -1,9 +1,15 @@
 package controllers;
 
+import dao.LinkedAccountDao;
+import dao.TokenActionDao;
+import dao.UserDao;
+import models.entities.LinkedAccount;
 import models.entities.TokenAction;
 import models.entities.User;
 import play.data.Form;
 import play.data.FormFactory;
+import play.db.jpa.JPAApi;
+import play.db.jpa.Transactional;
 import play.i18n.MessagesApi;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -52,16 +58,19 @@ public class Signup extends Controller {
 
 	private final MessagesApi msg;
 
+	private final JPAApi jpaApi;
+
 	@Inject
 	public Signup(final PlayAuthenticate auth, final UserProvider userProvider,
-				  final MyUsernamePasswordAuthProvider userPaswAuthProvider,
-				  final FormFactory formFactory, final MessagesApi msg) {
+                  final MyUsernamePasswordAuthProvider userPaswAuthProvider,
+                  final FormFactory formFactory, final MessagesApi msg,
+                  final JPAApi jpaApi) {
 		this.auth = auth;
 		this.userProvider = userProvider;
 		this.userPaswAuthProvider = userPaswAuthProvider;
 		this.PASSWORD_RESET_FORM = formFactory.form(PasswordReset.class);
 		this.FORGOT_PASSWORD_FORM = formFactory.form(MyIdentity.class);
-
+        this.jpaApi = jpaApi;
 		this.msg = msg;
 	}
 
@@ -101,7 +110,8 @@ public class Signup extends Controller {
 							"playauthenticate.reset_password.message.instructions_sent",
 							email));
 
-			final User user = User.findByEmail(email);
+			final UserDao userDao = new UserDao(jpaApi.em());
+			final User user = userDao.findByEmail(email);
 			if (user != null) {
 				// yep, we have a user with this email that is active - we do
 				// not know if the user owning that account has requested this
@@ -141,7 +151,8 @@ public class Signup extends Controller {
 	private TokenAction tokenIsValid(final String token, final String type) {
 		TokenAction ret = null;
 		if (token != null && !token.trim().isEmpty()) {
-			final TokenAction ta = TokenAction.findByToken(token, type);
+            TokenActionDao tokenActionDao = new TokenActionDao(jpaApi.em());
+			final TokenAction ta = tokenActionDao.findByToken(token, type);
 			if (ta != null && ta.isValid()) {
 				ret = ta;
 			}
@@ -162,6 +173,7 @@ public class Signup extends Controller {
 		);
 	}
 
+	@Transactional
 	public Result doResetPassword() {
 		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
 		final Form<PasswordReset> filledForm = PASSWORD_RESET_FORM
@@ -181,9 +193,13 @@ public class Signup extends Controller {
 				// Pass true for the second parameter if you want to
 				// automatically create a password and the exception never to
 				// happen
-				u.resetPassword(new MyUsernamePasswordAuthUser(newPassword),
-						false);
-                TokenAction.deleteByUser(u, "PASSWORD_RESET");
+                MyUsernamePasswordAuthUser myUsernamePasswordAuthUser =  new MyUsernamePasswordAuthUser(newPassword);
+                final LinkedAccountDao linkedAccountDao = new LinkedAccountDao(jpaApi.em());
+                LinkedAccount linkedAccount = linkedAccountDao.findByProviderKey(u, myUsernamePasswordAuthUser.getProvider());
+                final UserDao userDao = new UserDao(jpaApi.em());
+                userDao.resetPassword(u, myUsernamePasswordAuthUser, false, linkedAccount);
+                final TokenActionDao tokenActionDao = new TokenActionDao(jpaApi.em());
+                tokenActionDao.deleteByUser(u, "PASSWORD_RESET");
 			} catch (final RuntimeException re) {
 				flash(Application.FLASH_MESSAGE_KEY,
 						this.msg.preferred(request()).at("playauthenticate.reset_password.message.no_password_account"));
@@ -215,6 +231,7 @@ public class Signup extends Controller {
 		return ok(exists.render(this.userProvider));
 	}
 
+	@Transactional
 	public Result verify(final String token) {
 		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
 		final TokenAction ta = tokenIsValid(token, "EMAIL_VERIFICATION");
@@ -222,8 +239,10 @@ public class Signup extends Controller {
 			return badRequest(no_token_or_invalid.render(this.userProvider));
 		}
 		final String email = ta.targetUser.email;
-		User.verify(ta.targetUser);
-		TokenAction.deleteByUser(unverified, "EMAIL_VERIFICATION");
+		final UserDao userDao = new UserDao(jpaApi.em());
+        userDao.verify(ta.targetUser);
+        final TokenActionDao tokenActionDao = new TokenActionDao(jpaApi.em());
+        tokenActionDao.deleteByUser(ta.targetUser, "EMAIL_VERIFICATION");
 		flash(Application.FLASH_MESSAGE_KEY,
 				this.msg.preferred(request()).at("playauthenticate.verify_email.success", email));
 		if (this.userProvider.getUser(session()) != null) {

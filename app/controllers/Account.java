@@ -4,13 +4,19 @@ import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
 import be.objectify.deadbolt.java.actions.SubjectPresent;
 import com.feth.play.module.pa.PlayAuthenticate;
+import com.feth.play.module.pa.providers.password.UsernamePasswordAuthUser;
 import com.feth.play.module.pa.user.AuthUser;
+import dao.LinkedAccountDao;
+import dao.UserDao;
+import models.entities.LinkedAccount;
 import models.entities.User;
 import play.data.Form;
 import play.data.FormFactory;
 import play.data.format.Formats.NonEmpty;
 import play.data.validation.Constraints.MinLength;
 import play.data.validation.Constraints.Required;
+import play.db.jpa.JPAApi;
+import play.db.jpa.Transactional;
 import play.i18n.Messages;
 import play.i18n.MessagesApi;
 import play.mvc.Controller;
@@ -23,6 +29,7 @@ import views.html.account.*;
 import javax.inject.Inject;
 
 public class Account extends Controller {
+    private final JPAApi jpaApi;
 
 	public static class Accept {
 
@@ -86,14 +93,15 @@ public class Account extends Controller {
 	@Inject
 	public Account(final PlayAuthenticate auth, final UserProvider userProvider,
 				   final MyUsernamePasswordAuthProvider myUsrPaswProvider,
-				   final FormFactory formFactory, final MessagesApi msg) {
+				   final FormFactory formFactory, final MessagesApi msg,
+                   JPAApi jpaApi) {
 		this.auth = auth;
 		this.userProvider = userProvider;
 		this.myUsrPaswProvider = myUsrPaswProvider;
 
 		this.ACCEPT_FORM = formFactory.form(Accept.class);
 		this.PASSWORD_CHANGE_FORM = formFactory.form(Account.PasswordChange.class);
-
+        this.jpaApi = jpaApi;
 		this.msg = msg;
 	}
 
@@ -136,6 +144,7 @@ public class Account extends Controller {
 		}
 	}
 
+	@Transactional
 	@Restrict(@Group(Application.USER_ROLE))
 	public Result doChangePassword() {
 		com.feth.play.module.pa.controllers.Authenticate.noCache(response());
@@ -147,10 +156,12 @@ public class Account extends Controller {
 		} else {
 			final User user = this.userProvider.getUser(session());
 			final String newPassword = filledForm.get().password;
-			user.changePassword(new MyUsernamePasswordAuthUser(newPassword),
-					true);
-			flash(Application.FLASH_MESSAGE_KEY,
-					this.msg.preferred(request()).at("playauthenticate.change_password.success"));
+			final UserDao userDao = new UserDao(jpaApi.em());
+			final LinkedAccountDao linkedAccountDao = new LinkedAccountDao(jpaApi.em());
+			UsernamePasswordAuthUser authUser = new MyUsernamePasswordAuthUser(newPassword);
+            LinkedAccount linkedAccount = linkedAccountDao.findByProviderKey(user, authUser.getProvider());
+            userDao.changePassword(authUser, true, linkedAccount);
+			flash(Application.FLASH_MESSAGE_KEY, this.msg.preferred(request()).at("playauthenticate.change_password.success"));
 			return redirect(routes.Application.profile());
 		}
 	}

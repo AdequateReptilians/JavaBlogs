@@ -1,6 +1,7 @@
 package dao;
 
 import models.entities.SecurityRole;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import javax.persistence.EntityManager;
@@ -16,5 +17,9 @@ public class SecurityRoleDao extends GenericDaoImpl<SecurityRole, Serializable> 
 
     public SecurityRole findByRoleName(String roleName) {
         return (SecurityRole)getSession().createCriteria(SecurityRole.class).add(Restrictions.eq("role_name", roleName)).list().get(0);
+    }
+
+    public int count() {
+        return (int)getSession().createCriteria(SecurityRole.class).setProjection(Projections.rowCount()).uniqueResult();
     }
 }
