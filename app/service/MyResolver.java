@@ -32,8 +32,7 @@ public class MyResolver extends Resolver {
     public Call auth(final String provider) {
         // You can provide your own authentication implementation,
         // however the default should be sufficient for most cases
-        return com.feth.play.module.pa.controllers.routes.Authenticate
-                .authenticate(provider);
+        return com.feth.play.module.pa.controllers.routes.Authenticate.authenticate(provider);
     }
 
     @Override

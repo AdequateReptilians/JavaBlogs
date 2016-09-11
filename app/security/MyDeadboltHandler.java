@@ -6,16 +6,19 @@ import be.objectify.deadbolt.java.ExecutionContextProvider;
 import be.objectify.deadbolt.java.models.Subject;
 import com.feth.play.module.pa.PlayAuthenticate;
 import com.feth.play.module.pa.user.AuthUserIdentity;
-import models.entities.User;
+import dao.UserDao;
+import play.db.jpa.Transactional;
 import play.mvc.Http;
 import play.mvc.Result;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 public class MyDeadboltHandler extends AbstractDeadboltHandler {
-
 	private final PlayAuthenticate auth;
 
 	public MyDeadboltHandler(final PlayAuthenticate auth, final ExecutionContextProvider exContextProvider) {
@@ -44,10 +47,14 @@ public class MyDeadboltHandler extends AbstractDeadboltHandler {
 	}
 
 	@Override
+    @Transactional
 	public CompletionStage<Optional<? extends Subject>> getSubject(final Http.Context context) {
 		final AuthUserIdentity u = this.auth.getUser(context);
 		// Caching might be a good idea here
-		return CompletableFuture.completedFuture(Optional.ofNullable((Subject)User.findByAuthUserIdentity(u)));
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory( "defaultPersistenceUnit" );
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+		final UserDao userDao = new UserDao(entityManager);
+		return CompletableFuture.completedFuture(Optional.ofNullable((Subject)userDao.findByAuthUserIdentity(u)));
 	}
 
 	@Override

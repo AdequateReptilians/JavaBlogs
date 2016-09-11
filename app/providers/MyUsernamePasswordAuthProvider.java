@@ -8,10 +8,10 @@ import com.feth.play.module.pa.providers.password.UsernamePasswordAuthUser;
 
 import controllers.routes;
 import dao.SecurityRoleDao;
+import dao.TokenActionDao;
 import dao.UserDao;
 import models.entities.LinkedAccount;
 import models.entities.SecurityRole;
-import models.entities.TokenAction;
 import models.entities.User;
 import play.Logger;
 import play.data.Form;
@@ -19,6 +19,7 @@ import play.data.FormFactory;
 import play.data.validation.Constraints.Email;
 import play.data.validation.Constraints.MinLength;
 import play.data.validation.Constraints.Required;
+import play.db.jpa.Transactional;
 import play.i18n.Lang;
 import play.i18n.Messages;
 import play.inject.ApplicationLifecycle;
@@ -27,9 +28,13 @@ import play.mvc.Http.Context;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,6 +50,16 @@ public class MyUsernamePasswordAuthProvider
 	private static final String SETTING_KEY_LINK_LOGIN_AFTER_PASSWORD_RESET = "loginAfterPasswordReset";
 
 	private static final String EMAIL_TEMPLATE_FALLBACK_LANGUAGE = "en";
+
+    private EntityManager entityManager;
+
+    private EntityManager getEntityManager(){
+        if(this.entityManager == null){
+            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+            this.entityManager = entityManagerFactory.createEntityManager();
+        }
+        return this.entityManager;
+    }
 
 	@Override
 	protected List<String> neededSettingKeys() {
@@ -154,7 +169,8 @@ public class MyUsernamePasswordAuthProvider
 
 	@Override
 	protected com.feth.play.module.pa.providers.password.UsernamePasswordAuthProvider.SignupResult signupUser(final MyUsernamePasswordAuthUser user) {
-		final User u = User.findByUsernamePasswordIdentity(user);
+	    final UserDao userDao = new UserDao(getEntityManager());
+		final User u = userDao.findByUsernamePasswordIdentity(user);
 		if (u != null) {
 			if (u.emailValidated) {
 				// This user exists, has its email validated and is active
@@ -166,11 +182,9 @@ public class MyUsernamePasswordAuthProvider
 			}
 		}
 		// The user either does not exist or is inactive - create a new one
-		@SuppressWarnings("unused")
-		final UserDao userDao = new UserDao(jpa);
-		final SecurityRoleDao securityRoleDao = new SecurityRoleDao(jpa);
-        // Collections.singletonList(SecurityRole.findByRoleName(controllers.Application.USER_ROLE));
-        List<SecurityRole> roles = SecurityRoleDao.findByRoleName();
+		final SecurityRoleDao securityRoleDao = new SecurityRoleDao(getEntityManager());
+        // Collections.singletonList(SecurityRole.findByRoleName());
+        List<SecurityRole> roles = Collections.singletonList(securityRoleDao.findByRoleName(controllers.Application.USER_ROLE));
 		final User newUser = userDao.create(user, roles);
 		return SignupResult.USER_CREATED_UNVERIFIED;
 	}
@@ -178,7 +192,8 @@ public class MyUsernamePasswordAuthProvider
 	@Override
 	protected com.feth.play.module.pa.providers.password.UsernamePasswordAuthProvider.LoginResult loginUser(
 			final MyLoginUsernamePasswordAuthUser authUser) {
-		final User u = User.findByUsernamePasswordIdentity(authUser);
+        final UserDao userDao = new UserDao(getEntityManager());
+		final User u = userDao.findByUsernamePasswordIdentity(authUser);
 		if (u == null) {
 			return LoginResult.NOT_FOUND;
 		} else {
@@ -277,19 +292,24 @@ public class MyUsernamePasswordAuthProvider
 	@Override
 	protected String generateVerificationRecord(
 			final MyUsernamePasswordAuthUser user) {
-		return generateVerificationRecord(User.findByAuthUserIdentity(user));
+        final UserDao userDao = new UserDao(getEntityManager());
+		return generateVerificationRecord(userDao.findByAuthUserIdentity(user));
 	}
 
+	@Transactional
 	protected String generateVerificationRecord(final User user) {
 		final String token = generateToken();
 		// Do database actions, etc.
-		TokenAction.create("EMAIL_VERIFICATION", token, user);
+        final TokenActionDao tokenActionDao = new TokenActionDao(getEntityManager());
+		tokenActionDao.create("EMAIL_VERIFICATION", token, user);
 		return token;
 	}
 
+	@Transactional
 	protected String generatePasswordResetRecord(final User u) {
 		final String token = generateToken();
-		TokenAction.create("PASSWORD_RESET", token, u);
+		final TokenActionDao tokenActionDao = new TokenActionDao(getEntityManager());
+        tokenActionDao.create("PASSWORD_RESET", token, u);
 		return token;
 	}
 
