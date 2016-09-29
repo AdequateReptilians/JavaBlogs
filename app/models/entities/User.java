@@ -3,14 +3,6 @@ package models.entities;
 import be.objectify.deadbolt.java.models.Permission;
 import be.objectify.deadbolt.java.models.Role;
 import be.objectify.deadbolt.java.models.Subject;
-import com.feth.play.module.pa.providers.password.UsernamePasswordAuthUser;
-import com.feth.play.module.pa.user.*;
-import models.entities.LinkedAccount;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import play.db.jpa.JPA;
-
 import javax.persistence.*;
 import java.util.*;
 
@@ -35,6 +27,7 @@ public class User implements Subject {
 
 	public String lastName;
 
+    @Temporal(TemporalType.TIMESTAMP)
     public Date lastLogin;
 
 	public boolean active;
@@ -44,7 +37,7 @@ public class User implements Subject {
 	@ManyToMany
 	public List<SecurityRole> roles;
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(mappedBy= "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	public List<models.entities.LinkedAccount> linkedAccounts;
 
 	@ManyToMany

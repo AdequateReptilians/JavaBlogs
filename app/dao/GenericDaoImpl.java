@@ -36,7 +36,7 @@ public class GenericDaoImpl<T, PK extends Serializable> implements GenericDao<T,
 
     /** Сохранить изменения, сделанные в объекте.  */
     public void update(T transientObject){
-        getSession().update(transientObject);
+        getSession().flush();
     }
 
     /** Удалить объект из базы данных */

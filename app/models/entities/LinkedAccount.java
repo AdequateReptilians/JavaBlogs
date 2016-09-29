@@ -1,9 +1,6 @@
 package models.entities;
 
 import com.feth.play.module.pa.user.AuthUser;
-import models.entities.User;
-import org.hibernate.annotations.Type;
-import play.db.jpa.JPA;
 import javax.persistence.*;
 
 @Entity
@@ -15,7 +12,7 @@ public class LinkedAccount {
     @Column(name = "id")
     public Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
 	public User user;
 

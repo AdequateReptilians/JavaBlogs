@@ -1,9 +1,6 @@
 package models.entities;
 
 import be.objectify.deadbolt.java.models.Permission;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import play.db.jpa.JPA;
 
 import javax.persistence.*;
 

@@ -16,13 +16,6 @@
 package models.entities;
 
 import be.objectify.deadbolt.java.models.Role;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import play.db.jpa.JPA;
-import play.db.jpa.JPAApi;
-import play.libs.F;
-
-import javax.inject.Inject;
 import javax.persistence.*;
 
 /**

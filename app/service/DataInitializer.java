@@ -11,9 +11,10 @@ import java.util.Collections;
  * Data initializer class.
  */
 public class DataInitializer {
+
     public DataInitializer() {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory( "defaultPersistenceUnit" );
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory( "defaultPersistenceUnit" );
+        EntityManager entityManager = emf.createEntityManager();
         SecurityRoleDao securityRoleDao = new SecurityRoleDao(entityManager);
         if (securityRoleDao.count() == 0) {
             for (final String roleName : Collections.singletonList(controllers.Application.USER_ROLE)) {
